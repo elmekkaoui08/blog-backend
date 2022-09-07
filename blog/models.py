@@ -119,7 +119,7 @@ class Comment(CommonModel):
     comment_id = models.AutoField(primary_key=True)
     content = models.CharField(max_length=500)
     image = models.TextField(blank=True)
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     def __str__(self):
         return self.content

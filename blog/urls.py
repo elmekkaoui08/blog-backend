@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import article_views, auth_views, posts_views, users_views, categories_views
+from .views import article_views, auth_views, posts_views, users_views, categories_views,  comment_views
 from .views import MyTokenObtainPairView
 
 from rest_framework_simplejwt.views import (
@@ -29,5 +29,7 @@ urlpatterns = [
     path('categories', categories_views.CategoriesList.as_view()),
     path('categories/add', categories_views.CategoriesCreate.as_view()),
     path('categories/<int:category_id>', categories_views.CategoriesRetrieveUpdateDestroy.as_view()),
+    # COMMENTS API
+    path('comments/add', comment_views.CommentCreate.as_view())
 
 ]

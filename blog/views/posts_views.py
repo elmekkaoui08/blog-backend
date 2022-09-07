@@ -3,7 +3,7 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDe
 from rest_framework.pagination import LimitOffsetPagination
 
 from ..models import Post
-from ..serializers import PostSerializer
+from ..serializers import PostSerializer, CommentSerializer
 from ..views import DefaultPagination
 
 
@@ -30,5 +30,8 @@ class PostRetrieveDestroyUpdate(RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
     lookup_field = 'post_id'
+
+class CreateComment(CreateAPIView):
+    serializer_class = CommentSerializer
 
 

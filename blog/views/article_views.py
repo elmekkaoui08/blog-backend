@@ -4,7 +4,7 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDe
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
-from ..models import Article, Post, Author
+from ..models import Article, Post, Author, User
 from ..serializers import ArticleSerializer, PostSerializer
 
 
@@ -35,7 +35,7 @@ class ArticleCreate(CreateAPIView):
         response = super().create(request, *args, **kwargs)
         # TODO: must change to get the connected user as the author for the post
         article = Article.objects.get(pk=response.data.get('article_id'))
-        author = Author.objects.get(pk=1)
+        author = Author.objects.get(user__id=request.data.get('user_id'))
         author.nbr_of_posts += 1
         author.save()
         post = Post(author=author, article=article)

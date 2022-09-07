@@ -68,6 +68,13 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
         fields = ['category_id', 'category_name']
 
 
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+    user_id = serializers.IntegerField()
+    article_id = serializers.IntegerField()
+    class Meta:
+        model = Comment
+        fields = ['comment_id', 'content', 'image', 'user_id', 'article_id']
+
 class ArticleSerializer(serializers.HyperlinkedModelSerializer):
     category = CategorySerializer(read_only=True)
     category_id = serializers.IntegerField()
@@ -83,13 +90,6 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         model = Post
         fields = ['post_id', 'article', 'author', 'post_date']
 
-
-class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    member = MemberSerializer()
-    article = ArticleSerializer()
-    class Meta:
-        model = Comment
-        fields = ['comment_id', 'content', 'image', 'member', 'article']
 
 
 class LikeSerializer(serializers.HyperlinkedModelSerializer):
