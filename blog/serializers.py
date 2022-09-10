@@ -13,10 +13,10 @@ class RoleSerializer(serializers.HyperlinkedModelSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     role = RoleSerializer(read_only=True)
     role_id = serializers.IntegerField()
-    password = serializers.CharField(max_length=100, write_only=True)
+    password = serializers.CharField(max_length=100, required=False, default=None)
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'date_of_birth', 'phone', 'picture', 'is_blocked','wrong_password_attempt', 'role', 'role_id', 'password']
+        fields = ['id', 'first_name', 'last_name', 'email', 'date_of_birth', 'phone', 'picture', 'is_blocked','wrong_password_attempt', 'role', 'role_id', 'password', 'is_active']
 
     def create(self, validated_data):
         password = validated_data.pop('password')

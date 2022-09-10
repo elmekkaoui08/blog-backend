@@ -25,6 +25,7 @@ urlpatterns = [
     path('posts/<int:post_id>', posts_views.PostRetrieveDestroyUpdate.as_view()),
     # USER API VIEWS
     path('users/<int:id>', users_views.UserRetrieveUpdateDestroy.as_view()),
+    path('users', users_views.UsersList.as_view()),
     # CATEGORIES API VIEWS
     path('categories', categories_views.CategoriesList.as_view()),
     path('categories/add', categories_views.CategoriesCreate.as_view()),

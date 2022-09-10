@@ -30,6 +30,7 @@ class User(CommonModel, AbstractUser):
     is_blocked = models.BooleanField(default=False)
     wrong_password_attempt = models.IntegerField(default=0)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    password = models.CharField(max_length=255, null=True)
 
     username = None
     USERNAME_FIELD = 'email'

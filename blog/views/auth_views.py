@@ -1,15 +1,17 @@
 from datetime import datetime, timedelta
+
 from django.core.mail import send_mail
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.utils import timezone
 
-from ..constantes import RESET_PASSWORD_MESSAGE, RESET_PASSWORD_SUBJECT, EMAIL_HOST_USER
-from ..models import User, Token, Member
+from ..constantes import RESET_PASSWORD_MESSAGE, RESET_PASSWORD_SUBJECT, EMAIL_HOST_USER, \
+    SET_PASSWORD_SUBJECT, SET_PASSWORD_MESSAGE
+from ..models import User, Token, Member, Author
 from ..serializers import UserSerializer, TokenSerializer
 
 
@@ -22,10 +24,22 @@ class RegisterView(APIView):
         except User.DoesNotExist:
             serializer = UserSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            member = Member()
             user = serializer.save()
-            member.user = user
-            member.save()
+            if request.data.get('role_id') == 1:
+                member = Member()
+                member.user = user
+                member.save()
+            elif request.data.get('role_id') == 2:
+                author = Author()
+                author.user = user
+                author.save();
+                now = datetime.now()
+                expires_at = now + timedelta(minutes=10)
+                token = Token()
+                token.expire_at = expires_at
+                token.user = user
+                token.save()
+                send_email_to_user(token, False)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -62,8 +76,9 @@ class TokenCreate(CreateAPIView):
             token.expire_at = expires_at
             token.user = user
             token.save()
-            message = RESET_PASSWORD_MESSAGE + str(token.token);
-            send_mail(RESET_PASSWORD_SUBJECT, message, EMAIL_HOST_USER, [email])
+            # message = RESET_PASSWORD_MESSAGE + str(token.token);
+            # send_mail(RESET_PASSWORD_SUBJECT, message, EMAIL_HOST_USER, [email])
+            send_email_to_user(token, True)
 
             return Response(data={"message": "Email with link to reset password have bees successfully sent to user"},
                             status=status.HTTP_200_OK);
@@ -95,3 +110,12 @@ class ResetPassword(UpdateAPIView):
         except Token.DoesNotExist:
             return Response(data={'message': 'Token is invalid, double check your inbox'},
                             status=status.HTTP_404_NOT_FOUND);
+
+
+def send_email_to_user(token: Token, is_reset_password: bool):
+        if is_reset_password:
+            message = RESET_PASSWORD_MESSAGE + str(token.token);
+            send_mail(RESET_PASSWORD_SUBJECT, message, EMAIL_HOST_USER, [token.user.email])
+        else:
+            message = SET_PASSWORD_MESSAGE + str(token.token);
+            send_mail(SET_PASSWORD_SUBJECT, message, EMAIL_HOST_USER, [token.user.email])
