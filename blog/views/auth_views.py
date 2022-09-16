@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from ..constantes import RESET_PASSWORD_MESSAGE, RESET_PASSWORD_SUBJECT, EMAIL_HOST_USER, \
     SET_PASSWORD_SUBJECT, SET_PASSWORD_MESSAGE
-from ..models import User, Token, Member, Author
+from ..models import User, Token, Member, Author, Admin
 from ..serializers import UserSerializer, TokenSerializer
 
 
@@ -25,7 +25,7 @@ class RegisterView(APIView):
             serializer = UserSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             user = serializer.save()
-            if request.data.get('role_id') == 1:
+            if request.data.get('role_id') == 3:
                 member = Member()
                 member.user = user
                 member.save()
@@ -33,13 +33,19 @@ class RegisterView(APIView):
                 author = Author()
                 author.user = user
                 author.save();
-                now = datetime.now()
-                expires_at = now + timedelta(minutes=10)
-                token = Token()
-                token.expire_at = expires_at
-                token.user = user
-                token.save()
-                send_email_to_user(token, False)
+            elif request.data.get('role_id') == 1:
+                admin = Admin()
+                admin.user = user
+                admin.save();
+
+            now = datetime.now()
+            expires_at = now + timedelta(days=15)
+            token = Token()
+            token.expire_at = expires_at
+            token.user = user
+            token.save()
+            send_email_to_user(token, False)
+
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 

@@ -69,26 +69,27 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    user_id = serializers.IntegerField()
-    article_id = serializers.IntegerField()
+    post_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = Comment
-        fields = ['comment_id', 'content', 'image', 'user_id', 'article_id']
+        fields = ['comment_id', 'comment', 'user_name', 'email', 'post_id']
 
 class ArticleSerializer(serializers.HyperlinkedModelSerializer):
     category = CategorySerializer(read_only=True)
+    comments = CommentSerializer(read_only=True)
     category_id = serializers.IntegerField()
     # image = serializers.ImageField(required=False)
     class Meta:
         model = Article
-        fields = ['article_id', 'title', 'content', 'image', 'nbr_likes', 'nbr_dislikes', 'category_id', 'created_at', 'category']
+        fields = ['article_id', 'title', 'content', 'image', 'nbr_likes', 'nbr_dislikes', 'category_id', 'created_at', 'category', 'comments']
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
     author = AuthorSerializer()
     article = ArticleSerializer()
+    comments = CommentSerializer(read_only=True, many=True)
     class Meta:
         model = Post
-        fields = ['post_id', 'article', 'author', 'post_date']
+        fields = ['post_id', 'article', 'author', 'post_date', 'comments']
 
 
 

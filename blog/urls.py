@@ -31,6 +31,7 @@ urlpatterns = [
     path('categories/add', categories_views.CategoriesCreate.as_view()),
     path('categories/<int:category_id>', categories_views.CategoriesRetrieveUpdateDestroy.as_view()),
     # COMMENTS API
-    path('comments/add', comment_views.CommentCreate.as_view())
+    path('comments/add', comment_views.CommentCreate.as_view()),
+    path('comments', comment_views.CommentList.as_view()),
 
 ]

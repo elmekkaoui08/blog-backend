@@ -2,7 +2,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 
-from ..models import Post
+from ..models import Post, Comment
 from ..serializers import PostSerializer, CommentSerializer
 from ..views import DefaultPagination
 

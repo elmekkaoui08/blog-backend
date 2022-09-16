@@ -15,16 +15,15 @@ class UsersList(ListAPIView):
     filter_backends = (SearchFilter,)
 
     def get_queryset(self):
-        authors = self.request.query_params.get('authors')
-        if authors is not None:
-            queryset = User.objects.filter(role_id=2)
+        user_type = self.request.query_params.get('user_type')
+        if user_type is not None:
+            queryset = User.objects.filter(role_id=user_type)
             return queryset
 
         return super().get_queryset()
 
 class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     #permission_classes = (IsAuthenticated, )
-    print('--------- Calling update method ------------')
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = 'id'
